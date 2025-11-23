@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { getAllCampaigns, getCampaignById } from '@/lib/campaignStore';
 import { generateInsights } from '@/lib/aiMock';
 import MetricCard from '@/components/MetricCard';
+import TimeOfDayHeatmap, { generateHourlyEngagement } from '@/components/TimeOfDayHeatmap';
 import { Campaign } from '@/types';
 
 function DashboardContent() {
@@ -237,6 +238,16 @@ function DashboardContent() {
                     ))}
                   </div>
                 </div>
+
+                {/* Time-of-Day Engagement Heatmap */}
+                {selectedCampaign && (
+                  <TimeOfDayHeatmap
+                    hourlyData={generateHourlyEngagement(
+                      selectedCampaign.metrics.clicks,
+                      selectedCampaign.metrics.impressions
+                    )}
+                  />
+                )}
 
                 {/* Insights */}
                 <div className="bg-white rounded-xl shadow-md p-6">
