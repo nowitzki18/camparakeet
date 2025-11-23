@@ -198,4 +198,30 @@ export function getAudiencePersona(input: GetAudiencePersonaInput): AudiencePers
   return persona;
 }
 
+/**
+ * Generates an AI-powered image based on business and campaign details.
+ * 
+ * @param input - Business information and campaign details
+ * @returns URL to generated image (mock - returns placeholder for now)
+ */
+export function generateAIImage(input: {
+  businessName: string;
+  offer: string;
+  goal: CampaignGoal;
+  businessType?: string;
+}): Promise<string> {
+  // Mock implementation - returns a placeholder with campaign info
+  // In real implementation, this would call DALL-E, Midjourney, or similar API
+  
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // For now, return a placeholder URL with campaign details encoded
+      // In production, this would be an actual AI-generated image URL
+      const encodedText = encodeURIComponent(`${input.businessName} - ${input.offer}`);
+      const placeholderUrl = `https://via.placeholder.com/400x300/667eea/ffffff?text=${encodedText}`;
+      resolve(placeholderUrl);
+    }, 1500); // Simulate API delay
+  });
+}
+
 

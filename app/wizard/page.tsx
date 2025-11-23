@@ -8,7 +8,7 @@ import AudienceSummaryCard from '@/components/AudienceSummaryCard';
 import AudiencePersonaCard from '@/components/AudiencePersonaCard';
 import BudgetProjectionCard from '@/components/BudgetProjectionCard';
 import AdPreviewCard from '@/components/AdPreviewCard';
-import { generateAdCopy, getAudiencePersona } from '@/lib/aiMock';
+import { generateAdCopy, getAudiencePersona, generateAIImage } from '@/lib/aiMock';
 import { saveCampaign } from '@/lib/campaignStore';
 import { BusinessType, CampaignGoal, AudiencePreset, BudgetType, AdCopySuggestion, Channel, AudiencePersona } from '@/types';
 
@@ -21,6 +21,7 @@ export default function WizardPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(wizardData.imageUrl);
   const [audiencePersona, setAudiencePersona] = useState<AudiencePersona | null>(null);
   const [isGeneratingPersona, setIsGeneratingPersona] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   const totalSteps = 5;
 
@@ -662,16 +663,60 @@ export default function WizardPage() {
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-300 bg-white shadow-soft file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
                 />
               </div>
-              <button
-                onClick={() => {
-                  const placeholderUrl = 'https://via.placeholder.com/400x300/E5E7EB/9CA3AF?text=Ad+Preview';
-                  setImagePreview(placeholderUrl);
-                  updateWizardData({ imageUrl: placeholderUrl });
-                }}
-                className="px-4 py-2 border-2 border-gray-300 rounded-xl text-gray-700 font-medium hover:border-primary-400 hover:bg-primary-50 transition-all duration-300"
-              >
-                Use Stock Placeholder Image
-              </button>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={() => {
+                    const placeholderUrl = 'https://via.placeholder.com/400x300/E5E7EB/9CA3AF?text=Ad+Preview';
+                    setImagePreview(placeholderUrl);
+                    updateWizardData({ imageUrl: placeholderUrl });
+                  }}
+                  className="px-4 py-2 border-2 border-gray-300 rounded-xl text-gray-700 font-medium hover:border-primary-400 hover:bg-primary-50 transition-all duration-300"
+                >
+                  Use Stock Placeholder Image
+                </button>
+                <button
+                  onClick={async () => {
+                    if (!wizardData.businessName || !wizardData.offerDescription || !wizardData.goal) {
+                      alert('Please fill in business name, offer description, and goal first.');
+                      return;
+                    }
+                    setIsGeneratingImage(true);
+                    try {
+                      const imageUrl = await generateAIImage({
+                        businessName: wizardData.businessName,
+                        offer: wizardData.offerDescription,
+                        goal: wizardData.goal as CampaignGoal,
+                        businessType: wizardData.businessType,
+                      });
+                      setImagePreview(imageUrl);
+                      updateWizardData({ imageUrl });
+                    } catch (error) {
+                      alert('Failed to generate image. Please try again.');
+                    } finally {
+                      setIsGeneratingImage(false);
+                    }
+                  }}
+                  disabled={isGeneratingImage || !wizardData.businessName || !wizardData.offerDescription || !wizardData.goal}
+                  className="px-4 py-2 bg-gradient-primary text-white rounded-xl font-medium hover:shadow-glow transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {isGeneratingImage ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                      Generate AI Image
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 
