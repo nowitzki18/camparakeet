@@ -54,14 +54,20 @@ export default function MetricCard({
       
       {/* Value Section - Flexible, centered */}
       <div className="flex-1 flex flex-col justify-center min-h-0 overflow-hidden">
-        <div className="mb-2 min-w-0 w-full">
-          <p className={`text-4xl font-bold bg-gradient-to-r ${gradientClasses[gradient]} bg-clip-text text-transparent leading-none break-all overflow-wrap-anywhere`}>
+        <div className="mb-2 min-w-0 w-full overflow-hidden">
+          <p 
+            className={`font-bold bg-gradient-to-r ${gradientClasses[gradient]} bg-clip-text text-transparent leading-none whitespace-nowrap overflow-hidden`}
+            style={{ 
+              fontSize: 'clamp(1.25rem, 3.5vw, 1.875rem)',
+              textOverflow: 'ellipsis'
+            }}
+          >
             {value}
           </p>
         </div>
-        <div className="h-5 flex items-start min-w-0 w-full">
+        <div className="h-5 flex items-start min-w-0 w-full overflow-hidden">
           {subLabel ? (
-            <p className="text-xs text-gray-500 font-medium break-words overflow-wrap-anywhere w-full">{subLabel}</p>
+            <p className="text-xs text-gray-500 font-medium whitespace-nowrap overflow-hidden text-ellipsis w-full">{subLabel}</p>
           ) : (
             <span className="text-xs text-transparent">placeholder</span>
           )}
