@@ -5,7 +5,7 @@
  * when integrating with OpenAI or other AI services.
  */
 
-import { AdCopySuggestion, CampaignGoal } from '@/types';
+import { AdCopySuggestion, CampaignGoal, AudiencePersona, BusinessType } from '@/types';
 
 export interface GenerateAdCopyInput {
   businessName: string;
@@ -130,6 +130,72 @@ export function generateInsights(metrics: {
   }
   
   return insights.slice(0, 3);
+}
+
+export interface GetAudiencePersonaInput {
+  businessType: BusinessType | string;
+  goal: CampaignGoal | string;
+  description?: string;
+}
+
+/**
+ * Generates an AI-powered audience persona based on business type, goal, and optional description.
+ * 
+ * @param input - Business information and campaign details
+ * @returns Audience persona with demographics, interests, and behaviors
+ */
+export function getAudiencePersona(input: GetAudiencePersonaInput): AudiencePersona {
+  const { businessType, goal, description } = input;
+  
+  // Generate persona based on business type and goal
+  let persona: AudiencePersona;
+  
+  if (businessType === 'Retail / D2C') {
+    if (goal === 'Online sales') {
+      persona = {
+        title: 'The Value-Conscious Online Shopper',
+        demographicSummary: 'Ages 25-45, primarily female (60%), middle to upper-middle income, tech-savvy, shops online regularly',
+        interests: ['Fashion & Style', 'Home Decor', 'Deals & Discounts', 'Product Reviews', 'Social Media Shopping'],
+        behaviours: ['Compares prices across platforms', 'Reads reviews before purchasing', 'Follows brands on social media', 'Shops during sales events', 'Uses mobile for browsing'],
+      };
+    } else {
+      persona = {
+        title: 'The Modern Consumer',
+        demographicSummary: 'Ages 22-40, balanced gender split, urban/suburban, active online presence',
+        interests: ['Lifestyle Brands', 'Quality Products', 'Convenience', 'Trending Items', 'Customer Service'],
+        behaviours: ['Researches before buying', 'Values brand reputation', 'Prefers fast shipping', 'Engages with brand content', 'Shares purchases online'],
+      };
+    }
+  } else if (businessType === 'Local Service') {
+    persona = {
+      title: 'The Local Service Seeker',
+      demographicSummary: 'Ages 30-55, homeowners, middle income, values quality and reliability over price',
+      interests: ['Home Improvement', 'Local Community', 'Quality Service', 'Trusted Providers', 'Word of Mouth'],
+      behaviours: ['Searches locally first', 'Reads Google reviews', 'Asks neighbors for recommendations', 'Prefers established businesses', 'Values personal service'],
+    };
+  } else if (businessType === 'Online SaaS') {
+    persona = {
+      title: 'The Productivity-Focused Professional',
+      demographicSummary: 'Ages 28-45, business owners or managers, tech-comfortable, growth-oriented',
+      interests: ['Business Growth', 'Productivity Tools', 'Efficiency', 'Innovation', 'Professional Development'],
+      behaviours: ['Evaluates ROI carefully', 'Trials before committing', 'Reads case studies', 'Compares features', 'Values integrations'],
+    };
+  } else {
+    // Generic persona
+    persona = {
+      title: 'The Engaged Customer',
+      demographicSummary: 'Ages 25-50, diverse demographics, active online, values quality and service',
+      interests: ['Quality Products/Services', 'Brand Values', 'Customer Experience', 'Innovation', 'Community'],
+      behaviours: ['Researches thoroughly', 'Values recommendations', 'Engages with brands', 'Seeks value', 'Shares experiences'],
+    };
+  }
+  
+  // Enhance with description if provided
+  if (description && description.trim()) {
+    persona.demographicSummary += `. Additional context: ${description}`;
+  }
+  
+  return persona;
 }
 
 

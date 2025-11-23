@@ -5,11 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useCampaignWizard } from '@/context/CampaignWizardContext';
 import StepLayout from '@/components/StepLayout';
 import AudienceSummaryCard from '@/components/AudienceSummaryCard';
+import AudiencePersonaCard from '@/components/AudiencePersonaCard';
 import BudgetProjectionCard from '@/components/BudgetProjectionCard';
 import AdPreviewCard from '@/components/AdPreviewCard';
-import { generateAdCopy } from '@/lib/aiMock';
+import { generateAdCopy, getAudiencePersona } from '@/lib/aiMock';
 import { saveCampaign } from '@/lib/campaignStore';
-import { BusinessType, CampaignGoal, AudiencePreset, BudgetType, AdCopySuggestion, Channel } from '@/types';
+import { BusinessType, CampaignGoal, AudiencePreset, BudgetType, AdCopySuggestion, Channel, AudiencePersona } from '@/types';
 
 export default function WizardPage() {
   const router = useRouter();
@@ -18,6 +19,8 @@ export default function WizardPage() {
   const [adCopySuggestions, setAdCopySuggestions] = useState<AdCopySuggestion[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(wizardData.imageUrl);
+  const [audiencePersona, setAudiencePersona] = useState<AudiencePersona | null>(null);
+  const [isGeneratingPersona, setIsGeneratingPersona] = useState(false);
 
   const totalSteps = 5;
 
@@ -63,6 +66,24 @@ export default function WizardPage() {
       });
       setAdCopySuggestions(suggestions);
       setIsGenerating(false);
+    }, 1000);
+  };
+
+  const handleSuggestAudience = () => {
+    if (!wizardData.businessType || !wizardData.goal) {
+      alert('Please fill in business type and goal first.');
+      return;
+    }
+
+    setIsGeneratingPersona(true);
+    setTimeout(() => {
+      const persona = getAudiencePersona({
+        businessType: wizardData.businessType,
+        goal: wizardData.goal,
+        description: wizardData.customAudienceDescription,
+      });
+      setAudiencePersona(persona);
+      setIsGeneratingPersona(false);
     }, 1000);
   };
 
@@ -295,18 +316,47 @@ export default function WizardPage() {
             </select>
           </div>
 
-          {wizardData.audiencePreset === 'Custom description' && (
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Describe your ideal customer
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-semibold text-gray-700">
+                Describe your ideal customer <span className="text-gray-500 font-normal">(Optional)</span>
               </label>
-              <textarea
-                value={wizardData.customAudienceDescription}
-                onChange={(e) => updateWizardData({ customAudienceDescription: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-300 bg-white shadow-soft"
-                rows={4}
-                placeholder="e.g., Small business owners, ages 30-50, interested in productivity tools..."
-              />
+              <button
+                type="button"
+                onClick={handleSuggestAudience}
+                disabled={isGeneratingPersona || !wizardData.businessType || !wizardData.goal}
+                className="text-sm text-primary-600 font-medium hover:text-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+              >
+                {isGeneratingPersona ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    Suggest Ideal Audience
+                  </>
+                )}
+              </button>
+            </div>
+            <textarea
+              value={wizardData.customAudienceDescription}
+              onChange={(e) => updateWizardData({ customAudienceDescription: e.target.value })}
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-300 bg-white shadow-soft"
+              rows={4}
+              placeholder="e.g., Small business owners, ages 30-50, interested in productivity tools..."
+            />
+          </div>
+
+          {audiencePersona && (
+            <div className="mt-4">
+              <AudiencePersonaCard persona={audiencePersona} />
             </div>
           )}
         </div>

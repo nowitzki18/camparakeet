@@ -22,6 +22,13 @@ export interface AdCopySuggestion {
   ctaLabel: string;
 }
 
+export interface AudiencePersona {
+  title: string;
+  demographicSummary: string;
+  interests: string[];
+  behaviours: string[];
+}
+
 export interface CampaignWizardData {
   // Step 1
   campaignName: string;
