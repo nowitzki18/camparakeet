@@ -27,7 +27,7 @@ export default function MetricCard({
 
   return (
     <div className="group bg-white rounded-xl shadow-soft p-6 border border-gray-100 hover:shadow-large transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-4 min-h-[24px]">
         <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">{label}</p>
         {trend && (
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
@@ -48,12 +48,14 @@ export default function MetricCard({
           </div>
         )}
       </div>
-      <p className={`text-4xl font-bold bg-gradient-to-r ${gradientClasses[gradient]} bg-clip-text text-transparent mb-2 leading-tight`}>
-        {value}
-      </p>
-      {subLabel && (
-        <p className="text-xs text-gray-500 font-medium mt-auto">{subLabel}</p>
-      )}
+      <div className="flex-1 flex flex-col justify-center">
+        <p className={`text-4xl font-bold bg-gradient-to-r ${gradientClasses[gradient]} bg-clip-text text-transparent mb-2 leading-none`}>
+          {value}
+        </p>
+        {subLabel && (
+          <p className="text-xs text-gray-500 font-medium mt-1">{subLabel}</p>
+        )}
+      </div>
       <div className={`mt-4 h-1 bg-gradient-to-r ${gradientClasses[gradient]} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
     </div>
   );
