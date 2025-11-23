@@ -230,22 +230,22 @@ function DashboardContent() {
                 </div>
 
                 {/* Metrics */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                  <div className="h-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-stretch w-full">
+                  <div className="min-w-0">
                     <MetricCard
                       label="Impressions"
                       value={selectedCampaign.metrics.impressions.toLocaleString()}
                       gradient="blue"
                     />
                   </div>
-                  <div className="h-full">
+                  <div className="min-w-0">
                     <MetricCard
                       label="Clicks"
                       value={selectedCampaign.metrics.clicks.toLocaleString()}
                       gradient="purple"
                     />
                   </div>
-                  <div className="h-full">
+                  <div className="min-w-0">
                     <MetricCard
                       label="CTR"
                       value={`${selectedCampaign.metrics.ctr}%`}
@@ -253,14 +253,14 @@ function DashboardContent() {
                       gradient="green"
                     />
                   </div>
-                  <div className="h-full">
+                  <div className="min-w-0">
                     <MetricCard
                       label="Conversions"
                       value={selectedCampaign.metrics.conversions.toLocaleString()}
                       gradient="orange"
                     />
                   </div>
-                  <div className="h-full">
+                  <div className="min-w-0">
                     <MetricCard
                       label="Spend"
                       value={`$${selectedCampaign.metrics.spend.toFixed(2)}`}

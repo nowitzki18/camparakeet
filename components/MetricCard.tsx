@@ -26,11 +26,12 @@ export default function MetricCard({
   };
 
   return (
-    <div className="group bg-white rounded-xl shadow-soft p-6 border border-gray-100 hover:shadow-large transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4 h-6 flex-shrink-0">
-        <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide leading-tight flex-1">{label}</p>
+    <div className="group bg-white rounded-xl shadow-soft p-6 border border-gray-100 hover:shadow-large transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col overflow-hidden">
+      {/* Header - Fixed height */}
+      <div className="flex items-center justify-between mb-4 h-6 flex-shrink-0 min-w-0">
+        <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide leading-tight flex-1 pr-2 truncate">{label}</p>
         {trend ? (
-          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ml-2 ${
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
             trend === 'up' ? 'bg-green-100' : trend === 'down' ? 'bg-red-100' : 'bg-gray-100'
           }`}>
             <svg 
@@ -47,20 +48,28 @@ export default function MetricCard({
             </svg>
           </div>
         ) : (
-          <div className="w-8 flex-shrink-0"></div>
+          <div className="w-8 h-8 flex-shrink-0"></div>
         )}
       </div>
-      <div className="flex-1 flex flex-col justify-center min-h-[90px]">
-        <p className={`text-4xl font-bold bg-gradient-to-r ${gradientClasses[gradient]} bg-clip-text text-transparent leading-[1.1] mb-0`}>
-          {value}
-        </p>
-        <div className="h-5 mt-2">
-          {subLabel && (
-            <p className="text-xs text-gray-500 font-medium">{subLabel}</p>
+      
+      {/* Value Section - Flexible, centered */}
+      <div className="flex-1 flex flex-col justify-center min-h-0 overflow-hidden">
+        <div className="mb-2 min-w-0 w-full">
+          <p className={`text-4xl font-bold bg-gradient-to-r ${gradientClasses[gradient]} bg-clip-text text-transparent leading-none break-all overflow-wrap-anywhere`}>
+            {value}
+          </p>
+        </div>
+        <div className="h-5 flex items-start min-w-0 w-full">
+          {subLabel ? (
+            <p className="text-xs text-gray-500 font-medium break-words overflow-wrap-anywhere w-full">{subLabel}</p>
+          ) : (
+            <span className="text-xs text-transparent">placeholder</span>
           )}
         </div>
       </div>
-      <div className={`mt-2 h-1 bg-gradient-to-r ${gradientClasses[gradient]} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0`}></div>
+      
+      {/* Footer - Fixed height */}
+      <div className={`mt-4 h-1 bg-gradient-to-r ${gradientClasses[gradient]} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0`}></div>
     </div>
   );
 }
