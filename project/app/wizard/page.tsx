@@ -22,8 +22,6 @@ export default function WizardPage() {
   const [audiencePersona, setAudiencePersona] = useState<AudiencePersona | null>(null);
   const [isGeneratingPersona, setIsGeneratingPersona] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
-  const [audiencePersona, setAudiencePersona] = useState<AudiencePersona | null>(null);
-  const [isGeneratingPersona, setIsGeneratingPersona] = useState(false);
 
   const totalSteps = 5;
 
