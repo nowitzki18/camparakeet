@@ -15,6 +15,8 @@ import { BusinessType, CampaignGoal, AudiencePreset, BudgetType, AdCopySuggestio
 export default function WizardPage() {
   const router = useRouter();
   const { wizardData, updateWizardData, toggleChannel, addLocation, updateLocation, removeLocation } = useCampaignWizard();
+  
+  // State declarations
   const [currentStep, setCurrentStep] = useState(1);
   const [adCopySuggestions, setAdCopySuggestions] = useState<AdCopySuggestion[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
