@@ -32,7 +32,7 @@ export default function MetricCard({
         <p 
           className="font-semibold text-gray-600 uppercase tracking-wide leading-tight flex-1 pr-2 overflow-hidden whitespace-nowrap"
           style={{ 
-            fontSize: 'clamp(0.625rem, 2vw, 0.875rem)',
+            fontSize: 'clamp(0.5rem, 1.6vw, 0.7rem)',
             textOverflow: 'ellipsis'
           }}
         >
@@ -66,7 +66,7 @@ export default function MetricCard({
           <p 
             className={`font-bold bg-gradient-to-r ${gradientClasses[gradient]} bg-clip-text text-transparent leading-none whitespace-nowrap overflow-hidden`}
             style={{ 
-              fontSize: 'clamp(1.25rem, 3.5vw, 1.875rem)',
+              fontSize: 'clamp(1rem, 2.8vw, 1.5rem)',
               textOverflow: 'ellipsis'
             }}
           >
@@ -111,11 +111,11 @@ export default function MetricCard({
           )}
         </div>
         <div className="flex-1 flex flex-col justify-center">
-          <p className={`text-4xl font-bold bg-gradient-to-r ${gradientClasses[gradient]} bg-clip-text text-transparent leading-none mb-2 break-all`}>
+          <p className={`text-3xl font-bold bg-gradient-to-r ${gradientClasses[gradient]} bg-clip-text text-transparent leading-none mb-2 break-all`}>
             {value}
           </p>
           {subLabel && (
-            <p className="text-sm text-gray-500 font-medium break-words">{subLabel}</p>
+            <p className="text-xs text-gray-500 font-medium break-words">{subLabel}</p>
           )}
         </div>
       </div>
