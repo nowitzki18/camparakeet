@@ -29,7 +29,15 @@ export default function MetricCard({
     <div className="group bg-white rounded-xl shadow-soft p-6 border border-gray-100 hover:shadow-large transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col overflow-hidden">
       {/* Header - Fixed height */}
       <div className="flex items-center justify-between mb-4 h-6 flex-shrink-0 min-w-0">
-        <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide leading-tight flex-1 pr-2 truncate">{label}</p>
+        <p 
+          className="font-semibold text-gray-600 uppercase tracking-wide leading-tight flex-1 pr-2 overflow-hidden whitespace-nowrap"
+          style={{ 
+            fontSize: 'clamp(0.625rem, 2vw, 0.875rem)',
+            textOverflow: 'ellipsis'
+          }}
+        >
+          {label}
+        </p>
         {trend ? (
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
             trend === 'up' ? 'bg-green-100' : trend === 'down' ? 'bg-red-100' : 'bg-gray-100'
