@@ -283,6 +283,8 @@ function DashboardContent() {
                   <div className="space-y-4">
                     {selectedCampaign.metrics.dailyPerformance.map((day, index) => {
                       const percentage = (day.clicks / maxClicks) * 100;
+                      const minWidth = Math.max(percentage, 8); // Minimum 8% width for visibility
+                      const showTextInside = percentage >= 15; // Show text inside bar if wide enough
                       return (
                         <div key={index} className="flex items-center gap-4">
                           <div className="w-24 text-xs font-semibold text-gray-600">
@@ -291,19 +293,26 @@ function DashboardContent() {
                               day: 'numeric',
                             })}
                           </div>
-                          <div className="flex-1 flex items-center gap-3">
-                            <div className="flex-1 bg-gray-200 rounded-full h-8 relative overflow-hidden shadow-inner">
+                          <div className="flex-1 flex items-center gap-3 relative">
+                            <div className="flex-1 bg-gray-200 rounded-full h-8 relative overflow-visible shadow-inner">
                               <div
-                                className="absolute top-0 left-0 h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-end pr-3 transition-all duration-500"
-                                style={{ width: `${percentage}%` }}
+                                className="absolute top-0 left-0 h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-500"
+                                style={{ width: `${minWidth}%`, minWidth: '8%' }}
                               >
-                                <span className="text-xs text-white font-bold">
-                                  {day.clicks} clicks
-                                </span>
+                                {showTextInside && (
+                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white font-bold whitespace-nowrap">
+                                    {day.clicks} clicks
+                                  </span>
+                                )}
                               </div>
                             </div>
+                            {!showTextInside && (
+                              <span className="text-xs text-cyan-600 font-bold whitespace-nowrap ml-2 flex-shrink-0">
+                                {day.clicks} clicks
+                              </span>
+                            )}
                           </div>
-                          <div className="w-24 text-xs text-gray-500 text-right font-medium">
+                          <div className="w-24 text-xs text-gray-500 text-right font-medium flex-shrink-0">
                             {day.impressions.toLocaleString()} views
                           </div>
                         </div>

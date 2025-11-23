@@ -209,33 +209,43 @@ function DashboardContent() {
                 <div className="bg-white rounded-xl shadow-md p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Over Time</h3>
                   <div className="space-y-3">
-                    {selectedCampaign.metrics.dailyPerformance.map((day, index) => (
-                      <div key={index} className="flex items-center gap-4">
-                        <div className="w-24 text-xs text-gray-600">
-                          {new Date(day.date).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                          })}
-                        </div>
-                        <div className="flex-1 flex items-center gap-2">
-                          <div className="flex-1 bg-gray-200 rounded-full h-6 relative">
-                            <div
-                              className="bg-primary-600 h-6 rounded-full flex items-center justify-end pr-2"
-                              style={{
-                                width: `${(day.clicks / maxClicks) * 100}%`,
-                              }}
-                            >
-                              <span className="text-xs text-white font-medium">
+                    {selectedCampaign.metrics.dailyPerformance.map((day, index) => {
+                      const percentage = (day.clicks / maxClicks) * 100;
+                      const minWidth = Math.max(percentage, 8); // Minimum 8% width for visibility
+                      const showTextInside = percentage >= 15; // Show text inside bar if wide enough
+                      return (
+                        <div key={index} className="flex items-center gap-4">
+                          <div className="w-24 text-xs text-gray-600">
+                            {new Date(day.date).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </div>
+                          <div className="flex-1 flex items-center gap-2 relative">
+                            <div className="flex-1 bg-gray-200 rounded-full h-6 relative overflow-visible">
+                              <div
+                                className="bg-primary-600 h-6 rounded-full transition-all duration-500"
+                                style={{ width: `${minWidth}%`, minWidth: '8%' }}
+                              >
+                                {showTextInside && (
+                                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-white font-medium whitespace-nowrap">
+                                    {day.clicks} clicks
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            {!showTextInside && (
+                              <span className="text-xs text-primary-600 font-medium whitespace-nowrap ml-2 flex-shrink-0">
                                 {day.clicks} clicks
                               </span>
-                            </div>
+                            )}
+                          </div>
+                          <div className="w-20 text-xs text-gray-500 text-right flex-shrink-0">
+                            {day.impressions.toLocaleString()} views
                           </div>
                         </div>
-                        <div className="w-20 text-xs text-gray-500 text-right">
-                          {day.impressions.toLocaleString()} views
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 

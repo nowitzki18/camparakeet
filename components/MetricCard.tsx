@@ -26,7 +26,7 @@ export default function MetricCard({
   };
 
   return (
-    <div className="group bg-white rounded-xl shadow-soft p-6 border border-gray-100 hover:shadow-large transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col overflow-hidden">
+    <div className="group relative bg-white rounded-xl shadow-soft p-6 border border-gray-100 hover:shadow-large transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col overflow-hidden">
       {/* Header - Fixed height */}
       <div className="flex items-center justify-between mb-4 h-6 flex-shrink-0 min-w-0">
         <p 
@@ -84,6 +84,41 @@ export default function MetricCard({
       
       {/* Footer - Fixed height */}
       <div className={`mt-4 h-1 bg-gradient-to-r ${gradientClasses[gradient]} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0`}></div>
+      
+      {/* Hover Tooltip - Shows full content */}
+      <div className="absolute inset-0 bg-white rounded-xl shadow-2xl border-2 border-primary-300 p-6 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform scale-95 group-hover:scale-100 flex flex-col">
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide leading-tight">
+            {label}
+          </p>
+          {trend && (
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+              trend === 'up' ? 'bg-green-100' : trend === 'down' ? 'bg-red-100' : 'bg-gray-100'
+            }`}>
+              <svg 
+                className={`w-5 h-5 ${
+                  trend === 'up' ? 'text-green-600' : trend === 'down' ? 'text-red-600' : 'text-gray-600'
+                }`} 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                {trend === 'up' && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />}
+                {trend === 'down' && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17l5-5m0 0l-5-5m5 5H6" />}
+                {trend === 'neutral' && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />}
+              </svg>
+            </div>
+          )}
+        </div>
+        <div className="flex-1 flex flex-col justify-center">
+          <p className={`text-4xl font-bold bg-gradient-to-r ${gradientClasses[gradient]} bg-clip-text text-transparent leading-none mb-2 break-all`}>
+            {value}
+          </p>
+          {subLabel && (
+            <p className="text-sm text-gray-500 font-medium break-words">{subLabel}</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
