@@ -9,11 +9,11 @@ import BudgetProjectionCard from '@/components/BudgetProjectionCard';
 import AdPreviewCard from '@/components/AdPreviewCard';
 import { generateAdCopy } from '@/lib/aiMock';
 import { saveCampaign } from '@/lib/campaignStore';
-import { BusinessType, CampaignGoal, AudiencePreset, BudgetType, AdCopySuggestion } from '@/types';
+import { BusinessType, CampaignGoal, AudiencePreset, BudgetType, AdCopySuggestion, Channel } from '@/types';
 
 export default function WizardPage() {
   const router = useRouter();
-  const { wizardData, updateWizardData } = useCampaignWizard();
+  const { wizardData, updateWizardData, toggleChannel, addLocation, updateLocation, removeLocation } = useCampaignWizard();
   const [currentStep, setCurrentStep] = useState(1);
   const [adCopySuggestions, setAdCopySuggestions] = useState<AdCopySuggestion[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -165,6 +165,47 @@ export default function WizardPage() {
             ))}
           </div>
         </div>
+
+        <div className="mt-6 pt-6 border-t border-gray-200">
+          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+            Channels <span className="text-red-500">*</span>
+          </h3>
+          <p className="text-xs text-gray-500 mb-4">
+            Choose where you want this campaign to run. At least one channel is required.
+          </p>
+          <div className="space-y-3">
+            {(['Google Search', 'Facebook / Instagram', 'Email'] as Channel[]).map((channel) => {
+              const isSelected = wizardData.channels?.includes(channel) || false;
+              const isLastChannel = wizardData.channels?.length === 1 && isSelected;
+              return (
+                <label
+                  key={channel}
+                  className={`flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all duration-300 ${
+                    isSelected
+                      ? 'border-primary-500 bg-primary-50 shadow-medium'
+                      : 'border-gray-200 hover:border-primary-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    className="w-5 h-5 text-primary-600 rounded focus:ring-primary-500"
+                    checked={isSelected}
+                    onChange={() => {
+                      if (!isLastChannel) {
+                        toggleChannel(channel);
+                      }
+                    }}
+                    disabled={isLastChannel}
+                  />
+                  <span className="font-medium text-gray-900 flex-1">{channel}</span>
+                  {isLastChannel && (
+                    <span className="text-xs text-gray-500">(At least one required)</span>
+                  )}
+                </label>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -175,45 +216,75 @@ export default function WizardPage() {
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Audience</h2>
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Location *
-            </label>
-            <input
-              type="text"
-              value={wizardData.location}
-              onChange={(e) => updateWizardData({ location: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              placeholder="City or region"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Radius *
-            </label>
-            <select
-              value={wizardData.radius}
-              onChange={(e) => updateWizardData({ radius: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              required
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-gray-900">Target locations</h3>
+            <button
+              type="button"
+              onClick={addLocation}
+              className="text-sm text-primary-600 font-medium hover:text-primary-700 transition-colors flex items-center gap-1"
             >
-              <option value="5km">5km</option>
-              <option value="10km">10km</option>
-              <option value="25km">25km</option>
-              <option value="nationwide">Nationwide</option>
-            </select>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Add location
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            {wizardData.locations?.map((loc, idx) => (
+              <div key={loc.id} className="flex gap-3 items-start p-4 border-2 border-gray-200 rounded-xl bg-white">
+                <div className="flex-1 space-y-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">
+                      Location {idx + 1} <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="City, area or pin"
+                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all text-sm"
+                      value={loc.name}
+                      onChange={(e) => updateLocation(loc.id, { name: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Radius</label>
+                    <select
+                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all text-sm"
+                      value={loc.radiusKm}
+                      onChange={(e) => updateLocation(loc.id, { radiusKm: Number(e.target.value) })}
+                    >
+                      <option value={5}>5 km</option>
+                      <option value={10}>10 km</option>
+                      <option value={25}>25 km</option>
+                      <option value={50}>50 km</option>
+                    </select>
+                  </div>
+                </div>
+                {wizardData.locations && wizardData.locations.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeLocation(loc.id)}
+                    className="text-gray-400 hover:text-red-500 transition-colors p-2"
+                    title="Remove location"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Audience Preset *
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Audience Preset <span className="text-red-500">*</span>
             </label>
             <select
               value={wizardData.audiencePreset}
               onChange={(e) => updateWizardData({ audiencePreset: e.target.value as AudiencePreset })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-300 bg-white shadow-soft"
               required
             >
               <option value="">Select preset</option>
@@ -226,13 +297,13 @@ export default function WizardPage() {
 
           {wizardData.audiencePreset === 'Custom description' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Describe your ideal customer
               </label>
               <textarea
                 value={wizardData.customAudienceDescription}
                 onChange={(e) => updateWizardData({ customAudienceDescription: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-300 bg-white shadow-soft"
                 rows={4}
                 placeholder="e.g., Small business owners, ages 30-50, interested in productivity tools..."
               />
@@ -242,8 +313,7 @@ export default function WizardPage() {
 
         <div>
           <AudienceSummaryCard
-            location={wizardData.location}
-            radius={wizardData.radius}
+            locations={wizardData.locations || []}
             preset={wizardData.audiencePreset}
             customDescription={wizardData.customAudienceDescription}
           />
@@ -480,6 +550,16 @@ export default function WizardPage() {
           {displayAdCopy && (
             <div className="mt-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Live Preview</h3>
+              <div className="mb-4 flex flex-wrap gap-2">
+                {wizardData.channels?.map((channel) => (
+                  <span
+                    key={channel}
+                    className="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-700"
+                  >
+                    {channel}
+                  </span>
+                ))}
+              </div>
               <AdPreviewCard
                 adCopy={displayAdCopy}
                 imageUrl={imagePreview}
@@ -519,6 +599,19 @@ export default function WizardPage() {
                 <span className="font-medium text-gray-700">Primary Goal:</span>
                 <span className="ml-2 text-gray-600">{wizardData.goal}</span>
               </div>
+              <div className="md:col-span-2">
+                <span className="font-medium text-gray-700">Channels:</span>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {wizardData.channels?.map((channel) => (
+                    <span
+                      key={channel}
+                      className="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-700"
+                    >
+                      {channel}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -526,11 +619,22 @@ export default function WizardPage() {
           <div className="border-b border-gray-200 pb-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Audience</h3>
             <AudienceSummaryCard
-              location={wizardData.location}
-              radius={wizardData.radius}
+              locations={wizardData.locations || []}
               preset={wizardData.audiencePreset}
               customDescription={wizardData.customAudienceDescription}
             />
+            {wizardData.locations && wizardData.locations.filter(loc => loc.name.trim()).length > 0 && (
+              <div className="mt-4 bg-gray-50 p-4 rounded-xl">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Locations:</p>
+                <ul className="space-y-1">
+                  {wizardData.locations.filter(loc => loc.name.trim()).map((loc, idx) => (
+                    <li key={loc.id} className="text-sm text-gray-700">
+                      – {loc.name} ({loc.radiusKm} km)
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           {/* Budget & Schedule */}
