@@ -145,3 +145,4 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions.
 - Fully responsive design for mobile and desktop
 - Modern, polished UI with smooth animations
 
+

@@ -1,18 +1,16 @@
 'use client';
 
 import React from 'react';
-import { AudiencePreset } from '@/types';
+import { AudiencePreset, LocationTarget } from '@/types';
 
 interface AudienceSummaryCardProps {
-  location: string;
-  radius: string;
+  locations: LocationTarget[];
   preset: AudiencePreset | '';
   customDescription: string;
 }
 
 export default function AudienceSummaryCard({
-  location,
-  radius,
+  locations,
   preset,
   customDescription,
 }: AudienceSummaryCardProps) {
@@ -30,6 +28,11 @@ export default function AudienceSummaryCard({
         return 'Not specified';
     }
   };
+
+  const validLocations = locations.filter(loc => loc.name.trim() !== '');
+  const minRadius = validLocations.length > 0 ? Math.min(...validLocations.map(loc => loc.radiusKm)) : 0;
+  const maxRadius = validLocations.length > 0 ? Math.max(...validLocations.map(loc => loc.radiusKm)) : 0;
+  const locationNames = validLocations.map(loc => loc.name).join(', ');
 
   return (
     <div className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-2xl p-6 shadow-medium animate-fade-in">
@@ -50,22 +53,30 @@ export default function AudienceSummaryCard({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Location</p>
-              <p className="text-sm font-medium text-gray-900">{location || 'Not specified'}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/80">
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Radius</p>
-              <p className="text-sm font-medium text-gray-900">{radius || 'Not specified'}</p>
+            <div className="flex-1">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Locations</p>
+              {validLocations.length > 0 ? (
+                <div className="space-y-1">
+                  {validLocations.length === 1 ? (
+                    <p className="text-sm font-medium text-gray-900">
+                      People within {minRadius} km of {locationNames}
+                    </p>
+                  ) : (
+                    <>
+                      <p className="text-sm font-medium text-gray-900">
+                        People within {minRadius === maxRadius ? `${minRadius}` : `${minRadius}–${maxRadius}`} km of:
+                      </p>
+                      <ul className="text-sm text-gray-700 list-disc list-inside space-y-0.5">
+                        {validLocations.map((loc, idx) => (
+                          <li key={idx}>{loc.name} ({loc.radiusKm} km)</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm font-medium text-gray-500">No locations specified</p>
+              )}
             </div>
           </div>
         </div>
@@ -94,4 +105,5 @@ export default function AudienceSummaryCard({
     </div>
   );
 }
+
 

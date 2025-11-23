@@ -132,3 +132,4 @@ export function generateInsights(metrics: {
   return insights.slice(0, 3);
 }
 
+

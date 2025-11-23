@@ -4,9 +4,17 @@ export type BusinessType = 'Retail / D2C' | 'Local Service' | 'Online SaaS' | 'O
 
 export type CampaignGoal = 'Website visits' | 'Calls / enquiries' | 'Store visits' | 'Online sales';
 
+export type Channel = 'Google Search' | 'Facebook / Instagram' | 'Email';
+
 export type AudiencePreset = 'Broad – all adults' | 'Local families' | 'Young professionals' | 'Custom description';
 
 export type BudgetType = 'Daily budget' | 'Total budget';
+
+export interface LocationTarget {
+  id: string;
+  name: string;   // e.g., city / area / pin
+  radiusKm: number;
+}
 
 export interface AdCopySuggestion {
   headline: string;
@@ -20,10 +28,10 @@ export interface CampaignWizardData {
   businessName: string;
   businessType: BusinessType | '';
   goal: CampaignGoal | '';
+  channels: Channel[];
   
   // Step 2
-  location: string;
-  radius: string;
+  locations: LocationTarget[];
   audiencePreset: AudiencePreset | '';
   customAudienceDescription: string;
   
@@ -54,4 +62,5 @@ export interface Campaign extends CampaignWizardData {
     dailyPerformance: Array<{ date: string; clicks: number; impressions: number }>;
   };
 }
+
 

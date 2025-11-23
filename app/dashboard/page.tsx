@@ -135,10 +135,29 @@ function DashboardContent() {
                       </span>
                     </div>
                     <p className="text-sm text-gray-600 mb-2">{campaign.goal}</p>
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {campaign.channels?.map((channel) => (
+                        <span
+                          key={channel}
+                          className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700"
+                        >
+                          {channel}
+                        </span>
+                      ))}
+                    </div>
                     <div className="flex items-center justify-between text-xs text-gray-500">
                       <span>${campaign.budgetAmount.toFixed(2)}</span>
                       <span>{campaign.businessName}</span>
                     </div>
+                    {campaign.locations && campaign.locations.filter(loc => loc.name.trim()).length > 0 && (
+                      <div className="mt-2 text-xs text-gray-500">
+                        {campaign.locations.filter(loc => loc.name.trim()).length} location{campaign.locations.filter(loc => loc.name.trim()).length > 1 ? 's' : ''} · {
+                          campaign.locations.filter(loc => loc.name.trim()).length > 0
+                            ? `${Math.min(...campaign.locations.filter(loc => loc.name.trim()).map(loc => loc.radiusKm))}–${Math.max(...campaign.locations.filter(loc => loc.name.trim()).map(loc => loc.radiusKm))} km`
+                            : ''
+                        }
+                      </div>
+                    )}
                   </button>
                 ))}
               </div>
@@ -166,24 +185,24 @@ function DashboardContent() {
                       {selectedCampaign.status}
                     </span>
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-200">
-                    <div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-gray-200">
+                    <div className="text-center sm:text-left">
                       <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Goal</p>
-                      <p className="text-sm font-bold text-gray-900">{selectedCampaign.goal}</p>
+                      <p className="text-sm font-bold text-gray-900 break-words">{selectedCampaign.goal}</p>
                     </div>
-                    <div>
+                    <div className="text-center sm:text-left">
                       <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Budget</p>
                       <p className="text-sm font-bold text-gray-900">
                         ${selectedCampaign.budgetAmount.toFixed(2)}
                       </p>
                     </div>
-                    <div>
+                    <div className="text-center sm:text-left">
                       <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Start</p>
                       <p className="text-sm font-bold text-gray-900">
                         {new Date(selectedCampaign.startDate).toLocaleDateString()}
                       </p>
                     </div>
-                    <div>
+                    <div className="text-center sm:text-left">
                       <p className="text-xs font-semibold text-gray-500 uppercase mb-1">End</p>
                       <p className="text-sm font-bold text-gray-900">
                         {selectedCampaign.endDate
@@ -192,10 +211,25 @@ function DashboardContent() {
                       </p>
                     </div>
                   </div>
+                  {selectedCampaign.channels && selectedCampaign.channels.length > 0 && (
+                    <div className="pt-4 border-t border-gray-200">
+                      <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Channels</p>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedCampaign.channels.map((channel) => (
+                          <span
+                            key={channel}
+                            className="inline-flex items-center rounded-full bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-700"
+                          >
+                            {channel}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Metrics */}
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                   <MetricCard
                     label="Impressions"
                     value={selectedCampaign.metrics.impressions.toLocaleString()}

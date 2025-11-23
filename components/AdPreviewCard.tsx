@@ -37,3 +37,4 @@ export default function AdPreviewCard({ adCopy, imageUrl }: AdPreviewCardProps) 
   );
 }
 
+
