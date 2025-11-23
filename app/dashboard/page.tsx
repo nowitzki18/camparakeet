@@ -229,34 +229,44 @@ function DashboardContent() {
                 </div>
 
                 {/* Metrics */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-stretch">
-                  <MetricCard
-                    label="Impressions"
-                    value={selectedCampaign.metrics.impressions.toLocaleString()}
-                    gradient="blue"
-                  />
-                  <MetricCard
-                    label="Clicks"
-                    value={selectedCampaign.metrics.clicks.toLocaleString()}
-                    gradient="purple"
-                  />
-                  <MetricCard
-                    label="CTR"
-                    value={`${selectedCampaign.metrics.ctr}%`}
-                    subLabel="Click-through rate"
-                    gradient="green"
-                  />
-                  <MetricCard
-                    label="Conversions"
-                    value={selectedCampaign.metrics.conversions.toLocaleString()}
-                    gradient="orange"
-                  />
-                  <MetricCard
-                    label="Spend"
-                    value={`$${selectedCampaign.metrics.spend.toFixed(2)}`}
-                    subLabel={`of $${selectedCampaign.budgetAmount.toFixed(2)}`}
-                    gradient="pink"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                  <div className="h-full">
+                    <MetricCard
+                      label="Impressions"
+                      value={selectedCampaign.metrics.impressions.toLocaleString()}
+                      gradient="blue"
+                    />
+                  </div>
+                  <div className="h-full">
+                    <MetricCard
+                      label="Clicks"
+                      value={selectedCampaign.metrics.clicks.toLocaleString()}
+                      gradient="purple"
+                    />
+                  </div>
+                  <div className="h-full">
+                    <MetricCard
+                      label="CTR"
+                      value={`${selectedCampaign.metrics.ctr}%`}
+                      subLabel="Click-through rate"
+                      gradient="green"
+                    />
+                  </div>
+                  <div className="h-full">
+                    <MetricCard
+                      label="Conversions"
+                      value={selectedCampaign.metrics.conversions.toLocaleString()}
+                      gradient="orange"
+                    />
+                  </div>
+                  <div className="h-full">
+                    <MetricCard
+                      label="Spend"
+                      value={`$${selectedCampaign.metrics.spend.toFixed(2)}`}
+                      subLabel={`of $${selectedCampaign.budgetAmount.toFixed(2)}`}
+                      gradient="pink"
+                    />
+                  </div>
                 </div>
 
                 {/* Performance Chart */}

@@ -27,10 +27,10 @@ export default function MetricCard({
 
   return (
     <div className="group bg-white rounded-xl shadow-soft p-6 border border-gray-100 hover:shadow-large transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4 min-h-[24px]">
-        <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">{label}</p>
-        {trend && (
-          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+      <div className="flex items-center justify-between mb-4 h-6 flex-shrink-0">
+        <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide leading-tight flex-1">{label}</p>
+        {trend ? (
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ml-2 ${
             trend === 'up' ? 'bg-green-100' : trend === 'down' ? 'bg-red-100' : 'bg-gray-100'
           }`}>
             <svg 
@@ -46,17 +46,21 @@ export default function MetricCard({
               {trend === 'neutral' && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />}
             </svg>
           </div>
+        ) : (
+          <div className="w-8 flex-shrink-0"></div>
         )}
       </div>
-      <div className="flex-1 flex flex-col justify-center">
-        <p className={`text-4xl font-bold bg-gradient-to-r ${gradientClasses[gradient]} bg-clip-text text-transparent mb-2 leading-none`}>
+      <div className="flex-1 flex flex-col justify-center min-h-[90px]">
+        <p className={`text-4xl font-bold bg-gradient-to-r ${gradientClasses[gradient]} bg-clip-text text-transparent leading-[1.1] mb-0`}>
           {value}
         </p>
-        {subLabel && (
-          <p className="text-xs text-gray-500 font-medium mt-1">{subLabel}</p>
-        )}
+        <div className="h-5 mt-2">
+          {subLabel && (
+            <p className="text-xs text-gray-500 font-medium">{subLabel}</p>
+          )}
+        </div>
       </div>
-      <div className={`mt-4 h-1 bg-gradient-to-r ${gradientClasses[gradient]} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
+      <div className={`mt-2 h-1 bg-gradient-to-r ${gradientClasses[gradient]} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0`}></div>
     </div>
   );
 }
