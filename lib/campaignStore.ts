@@ -72,4 +72,13 @@ export function updateCampaignStatus(id: string, status: 'Active' | 'Draft'): Ca
   return null;
 }
 
+export function terminateCampaign(id: string): Campaign | null {
+  const campaign = campaigns.find(c => c.id === id);
+  if (campaign) {
+    campaign.status = 'Draft'; // Set to Draft when terminated
+    return campaign;
+  }
+  return null;
+}
+
 

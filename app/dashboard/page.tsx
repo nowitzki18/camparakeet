@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { getAllCampaigns, getCampaignById } from '@/lib/campaignStore';
+import { getAllCampaigns, getCampaignById, terminateCampaign } from '@/lib/campaignStore';
 import { generateInsights } from '@/lib/aiMock';
 import MetricCard from '@/components/MetricCard';
 import TimeOfDayHeatmap, { generateHourlyEngagement } from '@/components/TimeOfDayHeatmap';
@@ -15,6 +15,11 @@ function DashboardContent() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
   const [insights, setInsights] = useState<string[]>([]);
+  
+  const refreshCampaigns = () => {
+    const allCampaigns = getAllCampaigns();
+    setCampaigns(allCampaigns);
+  };
 
   useEffect(() => {
     const allCampaigns = getAllCampaigns();
@@ -27,6 +32,24 @@ function DashboardContent() {
       setSelectedCampaignId(allCampaigns[0].id);
     }
   }, [searchParams]);
+
+  const handleTerminateCampaign = (campaignId: string) => {
+    if (confirm('Are you sure you want to terminate this campaign? This action cannot be undone.')) {
+      terminateCampaign(campaignId);
+      refreshCampaigns();
+      // If terminated campaign was selected, select first available campaign
+      if (selectedCampaignId === campaignId) {
+        const allCampaigns = getAllCampaigns();
+        if (allCampaigns.length > 0) {
+          setSelectedCampaignId(allCampaigns[0].id);
+          router.push(`/dashboard?campaign=${allCampaigns[0].id}`);
+        } else {
+          setSelectedCampaignId(null);
+          router.push('/dashboard');
+        }
+      }
+    }
+  };
 
   useEffect(() => {
     if (selectedCampaignId) {
@@ -172,19 +195,31 @@ function DashboardContent() {
                 {/* Campaign Header */}
                 <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-large p-6 border border-white/50">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-                    <div>
+                    <div className="flex-1">
                       <h2 className="text-3xl font-bold text-gray-900">{selectedCampaign.campaignName}</h2>
                       <p className="text-gray-600 mt-1">{selectedCampaign.businessName}</p>
                     </div>
-                    <span
-                      className={`px-4 py-2 text-sm font-semibold rounded-xl ${
-                        selectedCampaign.status === 'Active'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
-                    >
-                      {selectedCampaign.status}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => handleTerminateCampaign(selectedCampaign.id)}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-medium hover:shadow-large transform hover:scale-105 flex items-center gap-2"
+                        title="Terminate Campaign"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Terminate
+                      </button>
+                      <span
+                        className={`px-4 py-2 text-sm font-semibold rounded-xl ${
+                          selectedCampaign.status === 'Active'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
+                        {selectedCampaign.status}
+                      </span>
+                    </div>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-gray-200">
                     <div className="text-center sm:text-left">

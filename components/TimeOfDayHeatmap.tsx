@@ -148,7 +148,7 @@ export default function TimeOfDayHeatmap({ hourlyData }: TimeOfDayHeatmapProps) 
         {/* Legend */}
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs text-gray-600">
-            <span>Less</span>
+            <span>Low</span>
             <div className="flex gap-1">
               <div className="w-4 h-4 bg-blue-100 rounded"></div>
               <div className="w-4 h-4 bg-blue-200 rounded"></div>
@@ -156,7 +156,7 @@ export default function TimeOfDayHeatmap({ hourlyData }: TimeOfDayHeatmapProps) 
               <div className="w-4 h-4 bg-blue-600 rounded"></div>
               <div className="w-4 h-4 bg-blue-800 rounded"></div>
             </div>
-            <span>More</span>
+            <span>High</span>
           </div>
         </div>
       </div>
